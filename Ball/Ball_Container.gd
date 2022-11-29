@@ -9,7 +9,6 @@ func _ready():
 func _physics_process(_delta):
 	if get_child_count() == 0:
 		Global.update_lives(-1)
-		Global.update_fever(-Global.fever)
 		make_ball()
 
 func make_ball():

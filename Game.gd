@@ -11,7 +11,6 @@ func _ready():
 		var level = Levels.levels[Global.level]
 		var layout = level["layout"]
 		var Brick_Container = get_node_or_null("/root/Game/Brick_Container")
-		Global.time = level["timer"]
 		if Brick_Container != null:
 			var Brick = load("res://Brick/Brick.tscn")
 			for rows in range(len(layout)):
@@ -20,7 +19,6 @@ func _ready():
 						var brick = Brick.instance()
 						brick.new_position = Vector2(margin.x + index.x*cols, margin.y + index.y*rows)
 						brick.position = Vector2(brick.new_position.x,-100)
-						brick.score = layout[rows][cols]
 						Brick_Container.add_child(brick)
 		var Instructions = get_node_or_null("/root/Game/UI/Instructions")
 		if Instructions != null:

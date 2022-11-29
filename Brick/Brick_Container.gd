@@ -7,3 +7,12 @@ func check_level():
 			count += 1
 	if count == 0:
 		Global.next_level()
+
+func weaken():
+	for c in get_children():
+		c.fragile()
+
+func restore():
+	for c in get_children():
+		c.strong()
+

@@ -1,0 +1,62 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://Shader/CanvasShader.gd" type="Script" id=1]
+
+[sub_resource type="Shader" id=5]
+code = "shader_type canvas_item;
+
+uniform vec2 origin = vec2(0.5, 0.5);
+uniform float thickness = 7.0;
+uniform float speed = 1.0;
+uniform float tim = 0;
+uniform float intensity = 0;
+uniform vec4 color = vec4(1, 1, 1, 1);
+
+float pulse(vec2 uv, float time, float thick){
+	float radius = speed * time;
+	float r = sqrt(pow(uv.x - origin.x, 2) + pow(uv.y - origin.y, 2));
+	return pow(10,  -pow(thick * (r - radius),  2.0));
+}
+
+vec2 distort_pulse(vec2 uv, float time, float thick){
+	float radius = speed * time;
+	float r = sqrt(pow(uv.x - origin.x, 2) + pow(uv.y - origin.y, 2));
+	if(r < radius){
+		return vec2(-pow(10,  -pow(thick * (r - radius),  2.0)), -pow(10,  -pow(thick * (r - radius),  2.0)));
+	}
+	else{
+		return vec2(pow(10,  -pow(thick * (r - radius),  2.0)), pow(10,  -pow(thick * (r - radius),  2.0)));
+	}
+}
+
+void fragment(){
+	COLOR = vec4(0,0,0,0);
+	vec2 screenUV = SCREEN_UV;
+	screenUV += distort_pulse(UV, tim, thickness) * .005 * intensity;
+	screenUV -= distort_pulse(UV, tim, thickness * 2.0) * .005 * intensity;
+	screenUV = vec2(clamp(screenUV.x, 0, 1), clamp(screenUV.y, 0, 1));
+	COLOR = texture(SCREEN_TEXTURE, screenUV);
+	COLOR += color * pulse(UV, tim, thickness * 2.0) * .1 * intensity;
+}"
+
+[sub_resource type="ShaderMaterial" id=6]
+resource_local_to_scene = true
+shader = SubResource( 5 )
+shader_param/origin = Vector2( 0.5, 0.5 )
+shader_param/thickness = 25.0
+shader_param/speed = 1.0
+shader_param/tim = 0.0
+shader_param/intensity = 0.0
+shader_param/color = Plane( 1, 1, 1, 1 )
+
+[node name="CanvasLayer" type="CanvasLayer"]
+script = ExtResource( 1 )
+
+[node name="ColorRect" type="ColorRect" parent="."]
+material = SubResource( 6 )
+anchor_right = 0.532
+margin_right = 479.232
+margin_bottom = 1024.0
+__meta__ = {
+"_edit_use_anchors_": true
+}
